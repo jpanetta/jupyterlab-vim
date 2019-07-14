@@ -311,7 +311,7 @@ function activateCellVim(app: JupyterFrontEnd, tracker: INotebookTracker): Promi
                     const { content } = current;
                     if (content.activeCell !== null) {
                         let editor = content.activeCell.editor as CodeMirrorEditor;
-                        if (editor.state.vim.insertMode) {
+                        if (editor.state.vim.insertMode || editor.state.vim.visualMode) {
                             (CodeMirror as any).Vim.handleKey(editor.editor, '<Esc>');
                         }
                         else {
