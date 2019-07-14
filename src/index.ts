@@ -311,7 +311,13 @@ function activateCellVim(app: JupyterFrontEnd, tracker: INotebookTracker): Promi
                     const { content } = current;
                     if (content.activeCell !== null) {
                         let editor = content.activeCell.editor as CodeMirrorEditor;
-                        (CodeMirror as any).Vim.handleKey(editor.editor, '<Esc>');
+                        if (editor.state.vim.insertMode) {
+                            (CodeMirror as any).Vim.handleKey(editor.editor, '<Esc>');
+                        }
+                        else {
+                            // If we're in normal mode, make escape leave the cell.
+                            commands.execute('notebook:enter-command-mode');
+                        }
                     }
                 }
             },
@@ -476,9 +482,10 @@ function activateCellVim(app: JupyterFrontEnd, tracker: INotebookTracker): Promi
             keys: ['Escape'],
             command: 'leave-insert-mode'
         });
+        // Make editing start in insert mode
         commands.addKeyBinding({
             selector: '.jp-Notebook:focus',
-            keys: ['Ctrl I'],
+            keys: ['Enter'],
             command: 'enter-insert-mode'
         });
         commands.addKeyBinding({
