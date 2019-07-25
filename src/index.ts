@@ -485,7 +485,7 @@ function activateCellVim(app: JupyterFrontEnd, tracker: INotebookTracker): Promi
         // Make editing start in insert mode
         commands.addKeyBinding({
             selector: '.jp-Notebook:focus',
-            keys: ['Enter'],
+            keys: ['Ctrl I'],
             command: 'enter-insert-mode'
         });
         commands.addKeyBinding({
