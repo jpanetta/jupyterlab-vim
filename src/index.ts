@@ -340,15 +340,21 @@ async function setupPlugin(
   commands.addCommand('leave-insert-mode', {
     label: 'Leave Insert Mode',
     execute: args => {
-      const current = getCurrent(args);
+        const current = getCurrent(args);
 
-      if (current) {
-        const { content } = current;
-        if (content.activeCell !== null) {
-          const editor = content.activeCell.editor as CodeMirrorEditor;
-          (CodeMirror as any).Vim.handleKey(editor.editor, '<Esc>');
+        if (current) {
+            const { content } = current;
+            if (content.activeCell !== null) {
+                let editor = content.activeCell.editor as CodeMirrorEditor;
+                if (editor.state.vim.insertMode || editor.state.vim.visualMode || !(JSON.stringify(editor.state.vim.inputState) === JSON.stringify(new editor.state.vim.inputState.__proto__.constructor()))) {
+                    (CodeMirror as any).Vim.handleKey(editor.editor, '<Esc>');
+                }
+                else {
+                    // If we're in normal mode with an empty `inputState`, make escape leave the cell.
+                    commands.execute('notebook:enter-command-mode');
+                }
+            }
         }
-      }
     },
     isEnabled
   });
